@@ -7,7 +7,7 @@
 	template<typename _Ts>
 	class array_iterator
     {
-      public:
+    public:
       	using value_type = _Ts;
 		using pointer = value_type*;
 		using reference = value_type&;
@@ -19,6 +19,14 @@
 
 		static constexpr size_t dim = value_type::dim + 1;
 		using deep_size_type = tensor_size<dim - 1>;
+
+    private:
+            value_type _value;
+            difference_type _step = 0;
+
+    public:
+
+
     };
 
 	template<typename _Elm>
@@ -69,6 +77,31 @@
 		static constexpr size_t dim = value_type::dim + 1;
 
 		using deep_size_type = tensor_size<dim>;
+
+        private:
+        
+            iterator _pointer;
+            size_t _size = 0;
+        public:
+        	base_tensor_ptr(elm_pointer _elm, deep_size_type _size) :
+                _pointer(value_type(_elm, sub_size(_size))),
+                _size(_size[0]) {}
+
+            const iterator& begin() const
+            {
+                return _pointer;
+            }
+
+            value_type at(size_t i) const
+            {
+                return *(begin() + (difference_type)i);
+            }
+
+            value_type operator[](size_t i) const
+            {
+                return at(i);
+            }
+
     };
 
 	template<typename _Elm, size_t _Dim>
@@ -92,8 +125,3 @@
 
 	template<typename _Elm, size_t _Dim>
 	using tensor_ptr = typename _tensor_traits<_Elm, _Dim>::type;
-
-int main()
-{
-    tensor_ptr<int, 3> a(3,4,5);
-}
